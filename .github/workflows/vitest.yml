@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - src/**
-      - tests/unit/**
+      - tests/**
       - vitest.config.ts
       - pnpm-lock.yaml
       - tsconfig.json
