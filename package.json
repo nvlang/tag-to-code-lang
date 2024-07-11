@@ -1,0 +1,47 @@
+{
+  "name": "@nvl/tag-to-code-lang",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "type": "module",
+  "author": {
+    "name": "N. V. Lang",
+    "email": "npm@nvlang.dev",
+    "url": "https://nvlang.dev/"
+  },
+  "license": "MIT",
+  "module": "./dist/mod.js",
+  "main": "./dist/mod.js",
+  "types": "./dist/mod.d.ts",
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint . && tsc -p tsconfig.json --noEmit --skipLibCheck",
+    "build": "tsc -p tsconfig.release.json",
+    "test": "vitest run --coverage"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.6.0",
+    "@types/eslint-config-prettier": "^6.11.3",
+    "@types/eslint__js": "^8.42.3",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.14.10",
+    "@typescript-eslint/eslint-plugin": "8.0.0-alpha.41",
+    "@typescript-eslint/parser": "8.0.0-alpha.41",
+    "@typescript-eslint/utils": "8.0.0-alpha.41",
+    "@vitest/coverage-v8": "^2.0.2",
+    "eslint": "^9.6.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-tsdoc": "^0.3.0",
+    "eslint-plugin-vitest": "^0.5.4",
+    "js-yaml": "^4.1.0",
+    "node-fetch": "^3.3.2",
+    "prettier": "^3.3.2",
+    "tsx": "^4.16.2",
+    "typescript-eslint": "8.0.0-alpha.41",
+    "vite-tsconfig-paths": "^4.3.2",
+    "vitest": "^2.0.2"
+  }
+}

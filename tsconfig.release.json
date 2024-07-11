@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "sourceMap": false,
+    "declarationMap": false,
+    "rootDir": "src",
+    "target": "ES6"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "tests", "dist", "coverage"]
+}

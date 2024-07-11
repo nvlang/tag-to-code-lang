@@ -1,0 +1,36 @@
+{
+  "overrides": [
+    {
+      "files": ["*.ts", "*.mts"],
+      "options": {
+        "parser": "typescript"
+      }
+    },
+    {
+      "files": ["*.json", "*.yaml", "*.yml"],
+      "options": {
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": ["*.jsonc"],
+      "options": {
+        "trailingComma": "none",
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": ["pnpm-lock.yaml"],
+      "options": {
+        "printWidth": 130
+      }
+    }
+  ],
+  "printWidth": 80,
+  "proseWrap": "always",
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 4,
+  "trailingComma": "es5",
+  "useTabs": false
+}
