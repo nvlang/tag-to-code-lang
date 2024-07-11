@@ -1,11 +1,11 @@
 import {
+    type CodeLang,
+    type CodeTag,
     isCodeLang,
     isCodeTag,
     tagToCodeLang,
-    type CodeLang,
-    type CodeTag,
 } from '$mod.js';
-import { describe, test, expect } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
 describe('tagToCodeLang', () => {
     describe('positive matches', () => {
@@ -26,7 +26,7 @@ describe('tagToCodeLang', () => {
             `%s`,
             (tag) => {
                 expect(tagToCodeLang(tag as CodeTag)).toBeUndefined();
-            }
+            },
         );
     });
 });

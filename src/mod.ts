@@ -28,7 +28,7 @@ export type CodeTag = (typeof data)[number][1][number];
  */
 export function isCodeTag(str: string): str is CodeTag {
     return (data as unknown as [string, string[]][]).some(([, tags]) =>
-        tags.includes(str)
+        tags.includes(str),
     );
 }
 
@@ -40,7 +40,7 @@ export function isCodeTag(str: string): str is CodeTag {
  */
 export function isCodeLang(str: string): str is CodeLang {
     return (data as unknown as [string, string[]][]).some(
-        ([lang]) => lang === str
+        ([lang]) => lang === str,
     );
 }
 
@@ -70,6 +70,6 @@ export function tagToCodeLang(tag: CodeTag): CodeLang | undefined {
     // Ensure tag is lowercase
     tag = tag.trim().toLowerCase().replace(/\s+/g, '-') as CodeTag;
     return data.find(([, tags]) =>
-        (tags as unknown as string[]).includes(tag)
+        (tags as unknown as string[]).includes(tag),
     )?.[0];
 }

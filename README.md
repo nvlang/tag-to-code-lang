@@ -48,10 +48,9 @@
 </div>
 </div>
 
-
 ## Getting Started
 
-**Note:** This package is [ESM-only]. 
+**Note:** This package is [ESM-only].
 
 ### Installation
 
@@ -69,7 +68,6 @@ yarn add @nvl/tag-to-code-lang # If using Yarn
 ```ts
 import { tagToCodeLang } from 'https://esm.sh/@nvl/tag-to-code-lang@1';
 ```
-
 
 ### Usage
 
@@ -120,5 +118,3 @@ project.
 [GitHub Linguist]: https://github.com/github-linguist/linguist
 [ESM-only]:
     https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
-
-
