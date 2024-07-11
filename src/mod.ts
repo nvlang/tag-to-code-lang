@@ -23,7 +23,7 @@ export type CodeTag = (typeof data)[number][1][number];
 /**
  * Type guard for {@link CodeTag | `CodeTag`}.
  *
- * @param str The string to check.
+ * @param str - The string to check.
  * @returns Whether the string is a valid code tag.
  */
 export function isCodeTag(str: string): str is CodeTag {
@@ -35,7 +35,7 @@ export function isCodeTag(str: string): str is CodeTag {
 /**
  * Type guard for {@link CodeLang | `CodeLang`}.
  *
- * @param str The string to check.
+ * @param str - The string to check.
  * @returns Whether the string is a valid code language.
  */
 export function isCodeLang(str: string): str is CodeLang {
