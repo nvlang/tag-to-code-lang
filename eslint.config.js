@@ -3,7 +3,6 @@ import vitest from 'eslint-plugin-vitest';
 import prettierConfig from 'eslint-config-prettier';
 import tsdocPlugin from 'eslint-plugin-tsdoc';
 import tseslint from 'typescript-eslint';
-import playwright from 'eslint-plugin-playwright';
 
 export default tseslint.config(
     {
@@ -67,12 +66,6 @@ export default tseslint.config(
         languageOptions: {
             globals: vitest.environments.env.globals,
         },
-    },
-    {
-        // Playwright test files
-        files: ['tests/e2e/**/*.{test,spec}.ts'],
-        plugins: { playwright },
-        rules: playwright.configs.recommended.rules,
     },
     prettierConfig,
 );
