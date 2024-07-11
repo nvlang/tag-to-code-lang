@@ -1,8 +1,13 @@
 {
   "name": "@nvl/tag-to-code-lang",
   "version": "1.0.0",
-  "description": "",
-  "keywords": [],
+  "description": "Given a language tag, return the corresponding programming language name. For example: `ts` → `TypeScript`.",
+  "keywords": [
+    "linguist",
+    "language",
+    "data",
+    "programming-languages"
+  ],
   "type": "module",
   "author": {
     "name": "N. V. Lang",
@@ -13,6 +18,20 @@
   "module": "./dist/mod.js",
   "main": "./dist/mod.js",
   "types": "./dist/mod.d.ts",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nvlang/tag-to-code-lang.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nvlang/tag-to-code-lang/issues"
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . && tsc -p tsconfig.json --noEmit --skipLibCheck",
