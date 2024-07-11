@@ -1,9 +1,9 @@
 <br>
 <div align="center">
 <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/nvlang/sveltex/main/res/dark/logo.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/nvlang/sveltex/main/res/light/logo.svg">
-    <img alt="Logo" src="https://raw.githubusercontent.com/nvlang/sveltex/main/res/light/logotype.svg" width="90%">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/nvlang/tag-to-code-lang/main/res/dark/logo.svg">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/nvlang/tag-to-code-lang/main/res/light/logo.svg">
+    <img alt="Logo" src="https://raw.githubusercontent.com/nvlang/tag-to-code-lang/main/res/light/logotype.svg" width="90%">
 </picture>
 <br>
 <br>
