@@ -36,7 +36,8 @@
     "format": "prettier --write .",
     "lint": "eslint . && tsc -p tsconfig.json --noEmit --skipLibCheck",
     "build": "tsc -p tsconfig.release.json",
-    "test": "vitest run --coverage"
+    "test": "vitest run --coverage",
+    "prepare": "husky"
   },
   "engines": {
     "node": ">=16"
@@ -55,6 +56,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-tsdoc": "^0.3.0",
     "eslint-plugin-vitest": "^0.5.4",
+    "husky": "^9.0.11",
     "js-yaml": "^4.1.0",
     "node-fetch": "^3.3.2",
     "prettier": "^3.3.2",
