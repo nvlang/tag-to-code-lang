@@ -60,4 +60,4 @@ jobs:
           fi
 
       - name: Publish to JSR with provenance
-        run: pnpm dlx jsr publish --provenance --allow-dirty
+        run: pnpm dlx jsr publish --allow-dirty
