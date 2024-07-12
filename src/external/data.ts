@@ -1,3 +1,14 @@
+/**
+ * Array of 2-tuples, where each 2-tuple has a programming language's "display
+ * name" as the first element, and an array of aliases as the second element.
+ *
+ * @remarks
+ * The sanitized display name is included in the array of aliases.
+ *
+ * @remarks
+ * The data is fetched and adapted from the `languages.yml` file from the
+ * [GitHub Linguist](https://github.com/github-linguist/linguist) repository.
+ */
 export const data = [
     ['1C Enterprise', ['1c-enterprise']],
     ['2-Dimensional Array', ['2-dimensional-array']],

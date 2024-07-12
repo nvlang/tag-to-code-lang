@@ -6,7 +6,18 @@ import { format } from 'prettier';
 await writeFile(
     'src/external/data.ts',
     await format(
-        'export const data = ' +
+        '/**\n' +
+            ' * Array of 2-tuples, where each 2-tuple has a programming language\'s "display\n' +
+            ' * name" as the first element, and an array of aliases as the second element.\n' +
+            ' *\n' +
+            ' * @remarks\n' +
+            ' * The sanitized display name is included in the array of aliases.\n' +
+            ' *\n' +
+            ' * @remarks\n' +
+            ' * The data is fetched and adapted from the `languages.yml` file from the\n' +
+            ' * [GitHub Linguist](https://github.com/github-linguist/linguist) repository.\n' +
+            ' */\n' +
+            'export const data = ' +
             JSON.stringify(await fetchData(), null, 4) +
             ' as const;\n',
         { parser: 'typescript', tabWidth: 4, singleQuote: true },
