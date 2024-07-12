@@ -35,7 +35,7 @@
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . && tsc -p tsconfig.json --noEmit --skipLibCheck",
-    "build": "tsc -p tsconfig.release.json",
+    "build": "tsc -p tsconfig.release.json && tsc-alias -p tsconfig.release.json",
     "test": "vitest run --coverage",
     "prepare": "husky"
   },
@@ -60,6 +60,7 @@
     "js-yaml": "^4.1.0",
     "node-fetch": "^3.3.2",
     "prettier": "^3.3.2",
+    "tsc-alias": "^1.8.10",
     "tsx": "^4.16.2",
     "typescript-eslint": "8.0.0-alpha.41",
     "vite-tsconfig-paths": "^4.3.2",

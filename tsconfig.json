@@ -39,8 +39,8 @@
   },
   "exclude": ["coverage", "dist", "node_modules"],
   "include": [
-    "*.js",
-    "*.ts",
+    "/*.js",
+    "/*.ts",
     "package.json",
     "src",
     "tests",
