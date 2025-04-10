@@ -1,5 +1,12 @@
 # @nvl/tag-to-code-lang
 
+## 1.1.1
+
+### Patch Changes
+
+- [`715c05c`](https://github.com/nvlang/tag-to-code-lang/commit/715c05c6ed078487c75f38c9089ed3a9b75a267a)
+  Thanks [@nvlang](https://github.com/nvlang)! - Re-publish with updated CI.
+
 ## 1.1.0
 
 ### Minor Changes

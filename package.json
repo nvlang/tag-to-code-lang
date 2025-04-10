@@ -1,6 +1,6 @@
 {
   "name": "@nvl/tag-to-code-lang",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Given a language tag, return the corresponding programming language name. For example: `ts` → `TypeScript`.",
   "keywords": [
     "linguist",
