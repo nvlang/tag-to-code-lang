@@ -60,7 +60,7 @@
     "@vitest/ui": "3.1.1",
     "commitlint": "^19.8.0",
     "eslint": "^9.24.0",
-    "eslint-config-prettier": "^10.1.1",
+    "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-tsdoc": "^0.4.0",
     "eslint-plugin-vitest": "^0.5.4",
     "glob": "^11.0.1",
