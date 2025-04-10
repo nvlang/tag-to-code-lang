@@ -1,0 +1,56 @@
+name: Monthly Update
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Runs at midnight on the first day of every month
+  workflow_dispatch: # Can be triggered manually
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: latest
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: pnpm
+          cache-dependency-path: ./pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Determine current branch
+        run:
+          echo "BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
+
+      - name: Ensure current branch is main
+        run: |
+          if [ "$BRANCH_NAME" != "main" ]; then
+            echo "Not on main branch, exiting."
+            exit 1
+          fi
+
+      - name: Run fetch-data script
+        run: pnpm exec tsx scripts/fetch-data.ts
+
+      - name: Check for changes
+        run: |
+          if [ -n "$(git status --porcelain src)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add src
+            git commit -m "chore: auto-update with new data from linguist"
+            git push origin main
+          else
+            echo "No changes detected in src files."
+          fi
