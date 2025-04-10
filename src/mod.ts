@@ -1,5 +1,5 @@
-import { data } from '$external/data.js';
-export { data } from '$external/data.js';
+import { data } from './external/data.js';
+export { data } from './external/data.js';
 
 /**
  * Type union of all code languages. By "code language", we mean any language
@@ -68,7 +68,7 @@ export function isCodeLang(str: string): str is CodeLang {
  */
 export function tagToCodeLang(tag: CodeTag): CodeLang | undefined {
     // Ensure tag is lowercase
-    tag = tag.trim().toLowerCase().replace(/\s+/g, '-') as CodeTag;
+    tag = tag.trim().toLowerCase().replace(/\s+/gu, '-') as CodeTag;
     return data.find(([, tags]) =>
         (tags as unknown as string[]).includes(tag),
     )?.[0];

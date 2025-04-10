@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    // This config is, by default, just for linting
+    "noEmit": true,
+    //
     "allowSyntheticDefaultImports": true,
     // Best practices
     "allowUnreachableCode": false,
@@ -24,9 +27,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "./dist",
-    "paths": {
-      "$*": ["src/*"]
-    },
     "resolveJsonModule": true,
     // Basic settings
     "rootDir": ".",
@@ -35,17 +35,8 @@
     // Type-checking
     "strict": true,
     // Versions and APIs
-    "target": "ESNext"
+    "target": "ES2018"
   },
-  "exclude": ["coverage", "dist", "node_modules"],
-  "include": [
-    "/*.js",
-    "/*.ts",
-    "package.json",
-    "src",
-    "tests",
-    "scripts",
-    "LICENSE",
-    "README.md"
-  ]
+  "exclude": ["coverage", "dist", "external", "node_modules", "res"],
+  "include": ["*.config.js", "*.config.ts", "src", "tests", "scripts"]
 }

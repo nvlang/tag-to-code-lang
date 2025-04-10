@@ -1,4 +1,4 @@
-import { data } from '$external/data.js';
+import { data } from '../src/external/data.js';
 import { inspect } from 'node:util';
 import process from 'node:process';
 

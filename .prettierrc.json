@@ -18,6 +18,12 @@
         "trailingComma": "none",
         "tabWidth": 2
       }
+    },
+    {
+      "files": ["pnpm-lock.yaml"],
+      "options": {
+        "printWidth": 130
+      }
     }
   ],
   "printWidth": 80,

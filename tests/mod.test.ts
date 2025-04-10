@@ -4,7 +4,7 @@ import {
     isCodeLang,
     isCodeTag,
     tagToCodeLang,
-} from '$mod.js';
+} from '../src/mod.js';
 import { describe, expect, test } from 'vitest';
 
 describe('tagToCodeLang', () => {

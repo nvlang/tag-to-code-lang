@@ -66,5 +66,5 @@ function dedupe(arr: string[]): string[] {
  * @returns The sanitized string.
  */
 function sanitize(str: string) {
-    return str.trim().toLowerCase().replace(/\s+/g, '-');
+    return str.trim().toLowerCase().replace(/\s+/gu, '-');
 }

@@ -1,0 +1,16 @@
+{
+  "name": "@nvl/tag-to-code-lang",
+  "version": "2.1.0",
+  "exports": "./src/mod.ts",
+  "license": "MIT",
+  "publish": {
+    "include": [
+      "src/**",
+      "package.json",
+      "README.md",
+      "LICENSE",
+      "CHANGELOG.md",
+      "tsconfig.release.json"
+    ]
+  }
+}
