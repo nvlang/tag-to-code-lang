@@ -1,6 +1,6 @@
 {
   "name": "@nvl/tag-to-code-lang",
-  "version": "2.1.0",
+  "version": "1.0.1",
   "exports": "./src/mod.ts",
   "license": "MIT",
   "publish": {
