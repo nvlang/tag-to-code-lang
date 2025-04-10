@@ -71,18 +71,18 @@ file.
 
 ## Acknowledgments
 
-This project is merely an interface to data provided by the [GitHub Linguist] project.
+This project is merely an interface to data provided by the [GitHub Linguist]
+project.
 
 ## Similar work
 
--   `linguist-languages`
-    ([NPM](https://www.npmjs.com/package/linguist-languages) /
-    [GitHub](https://github.com/ikatyang/linguist-languages)): The
-    `languages.yml` file from the GitHub Linguist project, as a JSON object. I
-    would've used this project instead of creating a separate one with a similar
-    purpose (though for a more specific use case), but I couldn't get it to work
-    due to
-    [URL encoded characters in import paths](https://github.com/ikatyang/linguist-languages/issues/278).
+- `linguist-languages` ([NPM](https://www.npmjs.com/package/linguist-languages)
+  / [GitHub](https://github.com/ikatyang/linguist-languages)): The
+  `languages.yml` file from the GitHub Linguist project, as a JSON object. I
+  would've used this project instead of creating a separate one with a similar
+  purpose (though for a more specific use case), but I couldn't get it to work
+  due to
+  [URL encoded characters in import paths](https://github.com/ikatyang/linguist-languages/issues/278).
 
 [GitHub Linguist]: https://github.com/github-linguist/linguist
 [ESM-only]:
