@@ -39,7 +39,7 @@
     "test": "vitest run --coverage",
     "prepare": "husky",
     "ci:version": "changeset version && pnpm exec tsx scripts/update-jsr-versions.ts && pnpm install --no-frozen-lockfile && pnpm run format",
-    "ci:publish": "pnpm --recursive publish --provenance --access public --no-git-checks && pnpm --recursive exec jsr publish --unstable-sloppy-imports --allow-dirty && changeset tag"
+    "ci:publish": "pnpm publish --provenance --access public --no-git-checks && pnpm exec jsr publish --unstable-sloppy-imports --allow-dirty && changeset tag"
   },
   "engines": {
     "node": ">=16"
