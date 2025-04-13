@@ -1,8 +1,8 @@
-name: Monthly Update
+name: Weekly Update
 
 on:
   schedule:
-    - cron: '0 0 * * 0' # Runs at midnight on the first day of every month
+    - cron: '0 0 * * 0' # Runs at 00:00 on every Sunday
   workflow_dispatch: # Can be triggered manually
 
 permissions:
