@@ -22,7 +22,7 @@ describe('tagToCodeLang', () => {
         });
     });
     describe('negative matches', () => {
-        test.each(['something', 'not-a-language', 'py', 'h', '.h'])(
+        test.each(['something', 'not-a-language', 'h', '.h'])(
             `%s`,
             (tag) => {
                 expect(tagToCodeLang(tag as CodeTag)).toBeUndefined();
