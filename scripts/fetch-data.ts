@@ -6,7 +6,9 @@ const langs = await fetchData();
 
 assertSeparatorsAbsent(langs);
 
-const raw = langs.map(([name, aliases]) => [name, ...aliases].join('\t')).join('\n');
+const raw = langs
+    .map(([name, aliases]) => [name, ...aliases].join('\t'))
+    .join('\n');
 
 const typeShape = langs
     .map(
