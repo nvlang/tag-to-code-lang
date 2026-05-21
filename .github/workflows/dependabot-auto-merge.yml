@@ -1,0 +1,44 @@
+---
+name: Dependabot auto-merge
+
+# Auto-merges Dependabot PRs for patch and minor updates once required checks
+# pass. The merge itself is performed by GitHub via the auto-merge API, so
+# the resulting squash commit on `develop` is signed by GitHub (Verified).
+#
+# Requires "Allow auto-merge" to be enabled in repo Settings → General →
+# Pull Requests, and at least one required status check (this repo's "Lint
+# and Test" job) on the target branch so the auto-merge actually waits.
+
+on:
+  pull_request_target:
+    branches:
+      - develop
+
+permissions:
+  contents: read
+
+jobs:
+  auto-merge:
+    name: Auto-merge patch + minor bumps
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Fetch Dependabot metadata
+        id: meta
+        uses: dependabot/fetch-metadata@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto-merge
+        if: >-
+          steps.meta.outputs.update-type == 'version-update:semver-patch' ||
+          steps.meta.outputs.update-type == 'version-update:semver-minor'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr merge --auto --squash "$PR_URL"
