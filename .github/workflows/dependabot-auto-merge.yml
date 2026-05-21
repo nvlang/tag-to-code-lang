@@ -3,16 +3,22 @@ name: Dependabot auto-merge
 
 # Auto-merges Dependabot PRs for patch and minor updates once required checks
 # pass. The merge itself is performed by GitHub via the auto-merge API, so
-# the resulting squash commit on `develop` is signed by GitHub (Verified).
+# the resulting squash commit on the target branch is signed by GitHub
+# (Verified).
+#
+# Triggers on PRs to both `develop` (the configured target for scheduled
+# updates) and `main` (where Dependabot opens security-advisory PRs
+# directly, ignoring the dependabot.yml target-branch).
 #
 # Requires "Allow auto-merge" to be enabled in repo Settings → General →
 # Pull Requests, and at least one required status check (this repo's "Lint
-# and Test" job) on the target branch so the auto-merge actually waits.
+# and Test" job) on each target branch so the auto-merge actually waits.
 
 on:
   pull_request_target:
     branches:
       - develop
+      - main
 
 permissions:
   contents: read
