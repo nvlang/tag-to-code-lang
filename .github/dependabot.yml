@@ -1,61 +1,52 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
 # https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
 version: 2
+
 updates:
-  # Package manager to use
   - package-ecosystem: 'npm'
-
-    # Location of package manifests
     directory: '/'
-
-    # Branch to create pull requests against
     target-branch: 'develop'
-
-    # Commit message preferences
     commit-message:
-      # Specifies a prefix for all commit messages that update dependencies in
-      # the Production dependency group.
       prefix: 'build(deps)'
-
-      # Specifies a prefix for all commit messages that update dependencies in
-      # the Development dependency group.
       prefix-development: 'build(deps-dev)'
-
-      # Specifies that any prefix is followed by a list of the dependencies
-      # updated in the commit.
       include: 'scope'
-
-    # When to check for updates
     schedule:
-      # How often to check for updates
       interval: 'monthly'
-
-      # Time of day to check for updates (hh:mm)
       time: '09:00'
-
-      # Timezone for time of day (zone identifier)
       timezone: 'Europe/Paris'
+    # Wait a bit after a release before opening a PR so post-release
+    # regressions surface elsewhere first.
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+    # Collapse N updates into 2 PRs: one for patch+minor (auto-merged
+    # by dependabot-auto-merge.yml), one for majors (needs review).
+    groups:
+      patch-and-minor:
+        update-types:
+          - 'minor'
+          - 'patch'
+      majors:
+        update-types:
+          - 'major'
 
-  # Package manager to use
   - package-ecosystem: 'github-actions'
-
-    # Location of package manifests. NB: The directory must be set to "/" to
-    # check for workflow files in .github/workflows.
+    # Must be "/" — github-actions ecosystem looks for workflow files in
+    # .github/workflows relative to this directory.
     directory: '/'
-
-    # Branch to create pull requests against
     target-branch: 'develop'
-
-    # When to check for updates
     schedule:
-      # How often to check for updates
       interval: 'monthly'
-
-      # Time of day to check for updates (hh:mm)
       time: '09:00'
-
-      # Timezone for time of day (zone identifier)
       timezone: 'Europe/Paris'
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+    groups:
+      patch-and-minor:
+        update-types:
+          - 'minor'
+          - 'patch'
+      majors:
+        update-types:
+          - 'major'
