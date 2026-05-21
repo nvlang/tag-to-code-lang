@@ -106,3 +106,13 @@ jobs:
           git add .
           git commit -m "chore: sync linguist data and publish [skip ci]"
           git push --follow-tags origin main
+
+      # Keep develop from drifting behind main on auto-generated data.
+      # Fast-forwards if possible; otherwise creates a merge commit.
+      - name: Sync develop with main
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git fetch origin develop
+          git checkout -B develop origin/develop
+          git merge origin/main -m "chore: sync linguist data from main [skip ci]"
+          git push origin develop
