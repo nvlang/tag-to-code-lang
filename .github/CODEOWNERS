@@ -1,1 +1,9 @@
+# Default: route review requests for all files to the maintainer.
 * @nvlang
+
+# Files updated by Dependabot. CODEOWNERS is last-match-wins, and
+# a pattern with no owner means "no code owner here" — so PRs that
+# only touch these paths don't auto-request review.
+/package.json
+/pnpm-lock.yaml
+/.github/workflows/

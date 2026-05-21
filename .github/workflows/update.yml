@@ -3,9 +3,10 @@ name: Sync upstream
 
 # Weekly cron that pulls the latest `languages.yml` from github-linguist
 # and, if there are any changes, writes a patch changeset, applies the
-# version bump, and pushes the result to main. The push triggers
-# release.yml, which is the single workflow registered as a trusted
-# publisher on npm — it handles the actual publish to npm and JSR.
+# version bump, and pushes the result to main. It then dispatches
+# release.yml (the single workflow registered as an npm trusted publisher),
+# which handles the actual publish to npm and JSR — a plain GITHUB_TOKEN
+# push wouldn't trigger release.yml's `push` event on its own.
 #
 # Note: the bot's commit is pushed with plain git and so is unverified in
 # the GitHub UI. Don't enable "Require signed commits" on main without
@@ -31,6 +32,7 @@ jobs:
 
     permissions:
       contents: write # push the version bump back to main + develop
+      actions: write # dispatch release.yml after pushing to main
 
     steps:
       - name: Checkout main
@@ -105,12 +107,24 @@ jobs:
           git commit -m "chore: sync linguist data"
           git push origin main
 
-      # Keep develop from drifting behind main on auto-generated data.
-      # Fast-forwards if possible; otherwise creates a merge commit.
-      - name: Sync develop with main
+      # A GITHUB_TOKEN push doesn't trigger release.yml's `push` event, so
+      # kick it off explicitly. release.yml sees the version-bumped state
+      # (no pending changesets) and publishes from its trusted-publisher env.
+      - name: Trigger release
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run release.yml --ref main
+
+      # The GITHUB_TOKEN push above also won't trigger sync-develop.yml, so
+      # fast-forward develop here. FF-only (no merge commit) so nothing ends
+      # up unsigned; if develop has diverged, warn instead.
+      - name: Fast-forward develop to main
         if: steps.changes.outputs.changed == 'true'
         run: |
-          git fetch origin develop
-          git checkout -B develop origin/develop
-          git merge origin/main -m "chore: sync linguist data from main [skip ci]"
-          git push origin develop
+          git fetch origin main develop
+          if git merge-base --is-ancestor origin/develop origin/main; then
+            git push origin "origin/main:refs/heads/develop"
+          else
+            echo "::warning::develop has commits not on main; fast-forward not possible. Back-merge manually (signed)."
+          fi
