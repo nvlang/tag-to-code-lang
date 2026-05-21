@@ -1,0 +1,49 @@
+---
+name: Sync develop with main
+
+# Keeps develop from drifting behind main. On every push to main (e.g. a
+# merged develop -> main PR, or a merged changesets "Version Packages" PR),
+# fast-forward develop to main if possible.
+#
+# Fast-forward only on purpose: it moves the develop ref without creating a
+# merge commit, so there's nothing to GPG-sign and nothing ends up
+# unverified. It only works when develop has no commits of its own that
+# aren't on main; if develop has diverged, the job warns and you back-merge
+# manually (signed) in your git client.
+#
+# Note: pushes made with the default GITHUB_TOKEN (the weekly cron) do not
+# trigger this workflow — that's fine, the cron self-syncs develop in its
+# own job.
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-develop
+  cancel-in-progress: false
+
+jobs:
+  fast-forward:
+    name: Fast-forward develop
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Fast-forward develop to main
+        run: |
+          git fetch origin main develop
+          if git merge-base --is-ancestor origin/develop origin/main; then
+            git push origin "origin/main:refs/heads/develop"
+            echo "develop fast-forwarded to $(git rev-parse --short origin/main)."
+          else
+            echo "::warning::develop has commits not on main; fast-forward not possible. Back-merge main into develop manually (signed) to keep it current."
+          fi
