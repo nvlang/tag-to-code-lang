@@ -8,7 +8,6 @@ export default defineConfig({
             reporter: ['text', 'json', 'html', 'lcov'],
             enabled: true,
             include: ['src'],
-            ignoreEmptyLines: true,
             reportOnFailure: true,
         },
         reporters: ['default', 'github-actions', 'html'],

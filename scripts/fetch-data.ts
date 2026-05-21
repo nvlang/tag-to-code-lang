@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { load } from 'js-yaml';
 import { writeFile } from 'fs/promises';
 import { format } from 'prettier';
