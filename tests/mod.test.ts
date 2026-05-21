@@ -22,12 +22,9 @@ describe('tagToCodeLang', () => {
         });
     });
     describe('negative matches', () => {
-        test.each(['something', 'not-a-language', 'h', '.h'])(
-            `%s`,
-            (tag) => {
-                expect(tagToCodeLang(tag as CodeTag)).toBeUndefined();
-            },
-        );
+        test.each(['something', 'not-a-language', 'h', '.h'])(`%s`, (tag) => {
+            expect(tagToCodeLang(tag as CodeTag)).toBeUndefined();
+        });
     });
 });
 

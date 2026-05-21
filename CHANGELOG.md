@@ -1,5 +1,16 @@
 # @nvl/tag-to-code-lang
 
+## 1.1.2
+
+### Patch Changes
+
+- [#6](https://github.com/nvlang/tag-to-code-lang/pull/6)
+  [`4b92dc9`](https://github.com/nvlang/tag-to-code-lang/commit/4b92dc97592fd6d7a7cc4dc15a4a22090e03a529)
+  Thanks [@nvlang](https://github.com/nvlang)! - Reduce shipped bundle by ~43%
+  (17 KB minified, 8.3 KB gzip) by storing the language table as a compact
+  tab-delimited string parsed once at module load. Public API unchanged. Also
+  syncs the latest upstream linguist data.
+
 ## 1.1.1
 
 ### Patch Changes
