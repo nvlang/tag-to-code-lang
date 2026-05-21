@@ -1,14 +1,16 @@
 ---
-name: Sync upstream and publish
+name: Sync upstream
 
-# Weekly cron that pulls the latest `languages.yml` from github-linguist and,
-# if there are any changes, bumps the patch version and publishes a new
-# release to npm + JSR — fully unattended. Manual releases still flow through
-# release.yml via changesets PRs.
+# Weekly cron that pulls the latest `languages.yml` from github-linguist
+# and, if there are any changes, writes a patch changeset, applies the
+# version bump, and pushes the result to main. The push triggers
+# release.yml, which is the single workflow registered as a trusted
+# publisher on npm — it handles the actual publish to npm and JSR.
 #
-# Note: the bot's commit + tag are pushed with plain git and so are unverified
-# in the GitHub UI. Don't enable "Require signed commits" on `main` without
-# replacing this push step with an API-based commit (or a GitHub App token).
+# Note: the bot's commit is pushed with plain git and so is unverified in
+# the GitHub UI. Don't enable "Require signed commits" on main without
+# replacing this push step with an API-based commit (or a GitHub App
+# token).
 
 on:
   schedule:
@@ -28,8 +30,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write # push the version bump + tag back to main
-      id-token: write # OIDC trusted publishing for npm + JSR
+      contents: write # push the version bump back to main + develop
 
     steps:
       - name: Checkout main
@@ -49,7 +50,6 @@ jobs:
           node-version: 22
           cache: pnpm
           cache-dependency-path: ./pnpm-lock.yaml
-          registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -84,6 +84,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm ci:version
 
+      # Fail-fast: don't push a broken commit to main.
       - name: Build
         if: steps.changes.outputs.changed == 'true'
         run: pnpm build
@@ -92,20 +93,17 @@ jobs:
         if: steps.changes.outputs.changed == 'true'
         run: pnpm test
 
-      - name: Publish to npm and JSR
-        if: steps.changes.outputs.changed == 'true'
-        env:
-          NPM_CONFIG_PROVENANCE: 'true'
-        run: pnpm ci:publish
-
-      - name: Commit and push
+      # Pushing to main (without `[skip ci]`) triggers release.yml, which
+      # detects the version-bumped state and runs `pnpm ci:publish` from
+      # its trusted-publisher environment.
+      - name: Commit and push to main
         if: steps.changes.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m "chore: sync linguist data and publish [skip ci]"
-          git push --follow-tags origin main
+          git commit -m "chore: sync linguist data"
+          git push origin main
 
       # Keep develop from drifting behind main on auto-generated data.
       # Fast-forwards if possible; otherwise creates a merge commit.
