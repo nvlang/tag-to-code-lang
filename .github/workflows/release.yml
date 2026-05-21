@@ -25,6 +25,11 @@ jobs:
     name: Version PR or publish
     runs-on: ubuntu-latest
 
+    # The npm trusted publisher entry is registered with this environment;
+    # the OIDC token must carry the matching `environment` claim or npm
+    # rejects the publish with 404 on the token exchange.
+    environment: release
+
     permissions:
       contents: write # changesets/action commits version bumps / tags
       pull-requests: write # changesets/action opens the "Version Packages" PR
