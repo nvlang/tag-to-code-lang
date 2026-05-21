@@ -12,6 +12,10 @@ on:
   push:
     branches:
       - main
+  # Dispatched by update.yml after the weekly cron pushes a version bump:
+  # a GITHUB_TOKEN push doesn't trigger `push` workflows, but it can trigger
+  # workflow_dispatch.
+  workflow_dispatch:
 
 permissions:
   contents: read
