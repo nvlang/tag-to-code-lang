@@ -39,9 +39,9 @@ updates:
       interval: 'monthly'
       time: '09:00'
       timezone: 'Europe/Paris'
+    # github-actions has no semver-* cooldown keys (tags aren't semver).
     cooldown:
       default-days: 7
-      semver-major-days: 14
     groups:
       patch-and-minor:
         update-types:
