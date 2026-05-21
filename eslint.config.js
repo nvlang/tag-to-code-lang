@@ -1,5 +1,5 @@
 import eslint from '@eslint/js';
-import vitest from 'eslint-plugin-vitest';
+import vitest from '@vitest/eslint-plugin';
 // import prettierConfig from 'eslint-config-prettier/flat';
 import tsdoc from 'eslint-plugin-tsdoc';
 import tseslint from 'typescript-eslint';

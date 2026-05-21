@@ -12,7 +12,7 @@ updates:
     directory: '/'
 
     # Branch to create pull requests against
-    target-branch: 'dependencies'
+    target-branch: 'develop'
 
     # Commit message preferences
     commit-message:
@@ -47,7 +47,7 @@ updates:
     directory: '/'
 
     # Branch to create pull requests against
-    target-branch: 'dependencies'
+    target-branch: 'develop'
 
     # When to check for updates
     schedule:

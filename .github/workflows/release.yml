@@ -1,96 +1,86 @@
 ---
-name: Test and Release
+name: Release
+
+# Publishes to npm and JSR using OIDC trusted publishing — no NPM_TOKEN or
+# JSR token needs to be configured. Trusted publishers must be registered
+# once at:
+#   https://www.npmjs.com/package/@nvl/tag-to-code-lang/access  (npm)
+#   https://jsr.io/@nvl/tag-to-code-lang/settings               (JSR)
+# pointing at this repository + this workflow file.
 
 on:
   push:
     branches:
       - main
-    paths:
-      - src/**
-      - pnpm-lock.yaml
-      - tsconfig.json
-      - tsconfig.*.json
-      - package.json
-      - jsr.json
-      - README.md
-      - LICENSE
-      - CHANGELOG.md
-  workflow_dispatch:
 
 permissions:
-  contents: write
-  statuses: write
-  id-token: write
-  pull-requests: write
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  publish:
-    name: Publish to NPM and JSR
+  release:
+    name: Version PR or publish
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Fetch all history for all branches and tags
 
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
+    permissions:
+      contents: write # changesets/action commits version bumps / tags
+      pull-requests: write # changesets/action opens the "Version Packages" PR
+      id-token: write # OIDC token for npm + JSR trusted publishing
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
         with:
-          version: latest
+          # Full history so changesets can write the changelog and tag.
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
           run_install: false
 
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: lts/*
+          node-version: 22
           cache: pnpm
           cache-dependency-path: ./pnpm-lock.yaml
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: https://registry.npmjs.org
 
-      - name: Install Dependencies
-        run: pnpm install
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Build
         run: pnpm build
 
-      - name: Run Vitest unit tests
+      - name: Test
         run: pnpm test
 
-      - name: Upload coverage reports to Codecov
+      - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: coverage/
+        continue-on-error: true
 
-      - name: Determine current branch
-        run:
-          echo "BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
-
-      - name: Ensure current branch is main
-        run: |
-          if [ "$BRANCH_NAME" != "main" ]; then
-            echo "Not on main branch, exiting."
-            exit 1
-          fi
-
-      # When you push something to main, this action will first create a PR on a
-      # new branch (`changeset-release/main`), where it'll have applied the
-      # version bumps and changelog edits and such. Then, once you merge that
-      # PR, it'll rerun this action, but this time it'll be publishing the
-      # changes instead of creating a PR.
-      - name: Publish to NPM and JSR or create release PR
+      # When the push to main brings new changesets, this opens (or updates) a
+      # "Version Packages" PR. When that PR is merged, this same workflow runs
+      # again — this time with no pending changesets but with version bumps in
+      # place — and the action runs `publish` instead.
+      #
+      # `commitMode: github-api` makes the action push commits and tags through
+      # the GitHub API instead of `git push`, so everything is GPG-signed by
+      # GitHub and attributed to github-actions[bot] (Verified). Added in
+      # changesets/action v1.5.0.
+      - name: Create release PR or publish
         id: changesets
         uses: changesets/action@v1
         with:
-          branch: main
           version: pnpm ci:version
           publish: pnpm ci:publish
+          commitMode: github-api
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Push git tags
-        # Don't run this step if the changesets action merely created a PR,
-        # since otherwise we'll get an error about the branch not having an
-        # upstream branch.
-        if: steps.changesets.outputs.published == 'true'
-        run: git push --follow-tags

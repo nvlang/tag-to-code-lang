@@ -9,8 +9,7 @@
       "package.json",
       "README.md",
       "LICENSE",
-      "CHANGELOG.md",
-      "tsconfig.release.json"
+      "CHANGELOG.md"
     ]
   }
 }

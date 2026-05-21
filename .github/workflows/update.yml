@@ -1,59 +1,118 @@
-name: Weekly Update
+---
+name: Sync upstream and publish
+
+# Weekly cron that pulls the latest `languages.yml` from github-linguist and,
+# if there are any changes, bumps the patch version and publishes a new
+# release to npm + JSR — fully unattended. Manual releases still flow through
+# release.yml via changesets PRs.
+#
+# Note: the bot's commit + tag are pushed with plain git and so are unverified
+# in the GitHub UI. Don't enable "Require signed commits" on `main` without
+# replacing this push step with an API-based commit (or a GitHub App token).
 
 on:
   schedule:
-    - cron: '0 0 * * 0' # Runs at 00:00 on every Sunday
-  workflow_dispatch: # Can be triggered manually
+    - cron: '0 0 * * 0' # Sundays at 00:00 UTC
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
 
 jobs:
-  update:
+  sync:
+    name: Sync linguist data
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+    permissions:
+      contents: write # push the version bump + tag back to main
+      id-token: write # OIDC trusted publishing for npm + JSR
 
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v5
         with:
-          version: latest
+          ref: main
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
           run_install: false
 
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: lts/*
+          node-version: 22
           cache: pnpm
           cache-dependency-path: ./pnpm-lock.yaml
+          registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
-      - name: Determine current branch
-        run:
-          echo "BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
-
-      - name: Ensure current branch is main
-        run: |
-          if [ "$BRANCH_NAME" != "main" ]; then
-            echo "Not on main branch, exiting."
-            exit 1
-          fi
-
-      - name: Run fetch-data script
+      - name: Fetch linguist data
         run: pnpm exec tsx scripts/fetch-data.ts
 
-      - name: Check for changes
+      - name: Detect changes
+        id: changes
         run: |
           if [ -n "$(git status --porcelain src)" ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add src
-            git commit -m "chore: auto-update with new data from linguist"
-            git push origin main
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           else
-            echo "No changes detected in src files."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No upstream changes — exiting."
           fi
+
+      - name: Generate changeset
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          cat > .changeset/auto-sync-linguist.md << 'EOF'
+          ---
+          '@nvl/tag-to-code-lang': patch
+          ---
+
+          Sync with upstream [`github-linguist/linguist`](https://github.com/github-linguist/linguist) data.
+          EOF
+
+      - name: Apply version bump
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm ci:version
+
+      - name: Build
+        if: steps.changes.outputs.changed == 'true'
+        run: pnpm build
+
+      - name: Test
+        if: steps.changes.outputs.changed == 'true'
+        run: pnpm test
+
+      - name: Publish to npm and JSR
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          NPM_CONFIG_PROVENANCE: 'true'
+        run: pnpm ci:publish
+
+      - name: Commit and push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: sync linguist data and publish [skip ci]"
+          git push --follow-tags origin main
+
+      # Keep develop from drifting behind main on auto-generated data.
+      # Fast-forwards if possible; otherwise creates a merge commit.
+      - name: Sync develop with main
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git fetch origin develop
+          git checkout -B develop origin/develop
+          git merge origin/main -m "chore: sync linguist data from main [skip ci]"
+          git push origin develop
