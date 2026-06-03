@@ -97,9 +97,10 @@ jobs:
         if: steps.changes.outputs.changed == 'true'
         run: pnpm test
 
-      # Pushing to main (without `[skip ci]`) triggers release.yml, which
-      # detects the version-bumped state and runs `pnpm ci:publish` from
-      # its trusted-publisher environment.
+      # Push the bumped state to main. This push is GITHUB_TOKEN-authored,
+      # so it does NOT trigger release.yml's `push` event (GitHub's
+      # loop-prevention) — the explicit dispatch in the next step is what
+      # actually kicks off the publish.
       - name: Commit and push to main
         if: steps.changes.outputs.changed == 'true'
         run: |
