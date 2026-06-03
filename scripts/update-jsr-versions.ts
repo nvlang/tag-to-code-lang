@@ -1,15 +1,18 @@
-import { readFileSync, writeFileSync } from 'node:fs';
-import { join, dirname } from 'node:path';
-import { globSync } from 'glob';
+/**
+ * Mirrors the root package.json's version into the root jsr.json so JSR
+ * publishes the same version as npm. Invoked from `pnpm ci:version` after
+ * changesets has bumped package.json.
+ */
 
-interface PackageJson {
-    version?: string | undefined;
+import { readFileSync, writeFileSync } from 'node:fs';
+
+interface VersionedJson {
+    version?: string;
     [key: string]: unknown;
 }
 
-function readJson(filePath: string): PackageJson {
-    const data = readFileSync(filePath, 'utf8');
-    return JSON.parse(data) as PackageJson;
+function readJson(filePath: string): VersionedJson {
+    return JSON.parse(readFileSync(filePath, 'utf8')) as VersionedJson;
 }
 
 function writeJson(filePath: string, obj: unknown): void {
@@ -17,44 +20,21 @@ function writeJson(filePath: string, obj: unknown): void {
 }
 
 function getVersion(filePath: string): string {
-    const json = readJson(filePath);
-    if (typeof json.version === 'string') {
-        return json.version;
+    const v = readJson(filePath).version;
+    if (typeof v !== 'string') {
+        throw new Error(`No string \`version\` in ${filePath}`);
     }
-    throw new Error(`Invalid version in ${filePath}`);
+    return v;
 }
 
-function updateVersion(filePath: string, newVersion: string): void {
-    const json = readJson(filePath);
-    if (typeof json.version !== 'string') {
-        throw new Error(`Invalid version in ${filePath}`);
-    }
-    json.version = newVersion;
-    writeJson(filePath, json);
+const npmVersion = getVersion('package.json');
+const jsrVersion = getVersion('jsr.json');
+
+if (npmVersion === jsrVersion) {
+    console.info(`jsr.json already at ${npmVersion}.`);
+} else {
+    const jsr = readJson('jsr.json');
+    jsr.version = npmVersion;
+    writeJson('jsr.json', jsr);
+    console.info(`Updated jsr.json: ${jsrVersion} → ${npmVersion}.`);
 }
-
-function syncVersions(): void {
-    const packageJsonFiles = globSync('packages/*/package.json');
-
-    for (const packageJsonPath of packageJsonFiles) {
-        const packageDir = dirname(packageJsonPath);
-        const jsrJsonPath = join(packageDir, 'jsr.json');
-
-        try {
-            const npmVersion = getVersion(packageJsonPath);
-            const jsrVersion = getVersion(jsrJsonPath);
-
-            if (npmVersion !== jsrVersion) {
-                console.info(
-                    `Updating version in ${jsrJsonPath}: ${jsrVersion} → ${npmVersion}`,
-                );
-                // Uncomment the next line to perform the update:
-                updateVersion(jsrJsonPath, npmVersion);
-            }
-        } catch (error) {
-            console.error(`Error processing ${packageJsonPath}: ${error}`);
-        }
-    }
-}
-
-syncVersions();
