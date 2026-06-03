@@ -40,7 +40,9 @@ jobs:
       id-token: write # OIDC token for npm + JSR trusted publishing
 
     steps:
-      - name: Checkout
+      # changesets/action needs persisted creds for git history reads;
+      # we don't upload artifacts.
+      - name: Checkout # zizmor: ignore[artipacked]
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           # Full history so changesets can write the changelog and tag.

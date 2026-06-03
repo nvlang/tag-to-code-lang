@@ -1,20 +1,37 @@
 ---
 name: Dependabot auto-merge
 
-# Auto-merges Dependabot PRs for patch and minor updates once required checks
-# pass. The merge itself is performed by GitHub via the auto-merge API, so
-# the resulting squash commit on the target branch is signed by GitHub
-# (Verified).
+# Auto-merges Dependabot PRs for patch and minor updates once required
+# checks pass. The merge itself is performed by GitHub via the auto-merge
+# API, so the resulting squash commit on the target branch is signed by
+# GitHub (Verified).
 #
 # Triggers on PRs to both `develop` (the configured target for scheduled
 # updates) and `main` (where Dependabot opens security-advisory PRs
 # directly, ignoring the dependabot.yml target-branch).
 #
 # Requires "Allow auto-merge" to be enabled in repo Settings → General →
-# Pull Requests, and at least one required status check (this repo's "Lint
-# and Test" job) on each target branch so the auto-merge actually waits.
+# Pull Requests, and at least one required status check (this repo's
+# "Lint and Test" job) on each target branch so the auto-merge waits.
+#
+# Why `pull_request_target` (and why it's safe here):
+#   - GitHub gave Dependabot PRs a read-only GITHUB_TOKEN by default in
+#     late 2022, so a plain `pull_request` trigger can't grant the write
+#     perms needed to enable auto-merge. `pull_request_target` runs in
+#     the base-branch context, where the token has the perms we declare
+#     below.
+#   - The classic `pull_request_target` exploit requires the workflow to
+#     `actions/checkout` the PR's HEAD (untrusted code) and execute it.
+#     This workflow never checks out any code: it only reads metadata
+#     via dependabot/fetch-metadata and calls `gh pr merge --auto`,
+#     both of which are GitHub-API operations that don't run PR code.
+#   - The job guard verifies all three of: the PR actor is the
+#     dependabot[bot] login, its immutable user.id is 49699333 (not
+#     spoofable by attacker repos), and the PR's head repository is the
+#     same as the base (rules out any fork-based variant).
 
 on:
+  # zizmor: ignore[dangerous-triggers]
   pull_request_target:
     branches:
       - develop
@@ -23,11 +40,18 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: dependabot-auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
 jobs:
   auto-merge:
     name: Auto-merge patch + minor bumps
     runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]'
+    if: >-
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.user.id == 49699333 &&
+      github.event.pull_request.head.repo.full_name == github.repository
 
     permissions:
       contents: write
