@@ -1,0 +1,44 @@
+---
+name: Zizmor
+
+# Static-analyses the workflow files for security issues (missing pins,
+# unsafe expressions, excessive permissions, etc.). Runs on every PR
+# that touches the workflows, on push to main, and weekly as a backstop.
+# Findings show up under Security → Code scanning.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - '.github/workflows/**'
+  schedule:
+    - cron: '0 9 * * 1' # Mondays 09:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write # upload SARIF
+  actions: read
+
+concurrency:
+  group: zizmor-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: Audit workflows
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout # zizmor: ignore[artipacked]
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Run zizmor
+        uses: zizmorcore/zizmor-action@5f14fd08f7cf1cb1609c1e344975f152c7ee938d # v0.5.6
