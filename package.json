@@ -18,6 +18,13 @@
   "module": "./dist/mod.js",
   "main": "./dist/mod.js",
   "types": "./dist/mod.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/mod.d.ts",
+      "import": "./dist/mod.js"
+    },
+    "./package.json": "./package.json"
+  },
   "private": false,
   "repository": {
     "type": "git",
@@ -60,7 +67,6 @@
     "eslint": "^10.4.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-tsdoc": "^0.5.2",
-    "glob": "^13.0.6",
     "husky": "^9.1.7",
     "js-yaml": "^4.1.1",
     "jsr": "^0.14.3",
