@@ -39,10 +39,12 @@ export type DataType = readonly [
 
 const RAW = ${JSON.stringify(raw)};
 
-export const data: DataType = RAW.split('\\n').map((line) => {
-    const [name, ...aliases] = line.split('\\t');
-    return [name, aliases] as const;
-}) as unknown as DataType;
+export const data: DataType = RAW.split('\\n')
+    .filter((line) => line.length > 0)
+    .map((line) => {
+        const [name, ...aliases] = line.split('\\t');
+        return [name, aliases] as const;
+    }) as unknown as DataType;
 `;
 
 await writeFile(
